@@ -1,0 +1,140 @@
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mezclador RGB con Bootstrap</title>
+    <!-- Bootstrap 5 CSS (CDN) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-light">
+    <div class="container py-4">
+      <header class="mb-4">
+        <h1 class="h3 fw-bold">Mezclador <span class="text-danger">R</span><span class="text-success">G</span><span class="text-primary">B</span></h1>
+        <p class="text-muted mb-0">Mueve los controles para obtener la tonalidad y su código hexadecimal.</p>
+      </header>
+
+      <div class="row g-4">
+        <!-- Controles -->
+        <div class="col-12 col-lg-6">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <div id="rgbForm" class="vstack gap-3">
+                <!-- Input para RGB decimal -->
+                <div class="col-12 mt-3">
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="rgbInput" placeholder="125,200,50" />
+                    <label for="rgbInput">Ingresar RGB (ej: 125,200,50)</label>
+                  </div>
+                </div>
+
+                <!-- Rojo -->
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label for="rRange" class="form-label mb-0">Rojo (R)</label>
+                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle" id="rBadge">0</span>
+                  </div>
+                  <div class="row g-2 align-items-center">
+                    <div class="col-8">
+                      <input type="range" min="0" max="255" value="0" class="form-range" id="rRange" data-channel="r" />
+                    </div>
+                    <div class="col-4">
+                      <input type="number" min="0" max="255" value="0" class="form-control" id="rNumber" data-channel="r" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Verde -->
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label for="gRange" class="form-label mb-0">Verde (G)</label>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle" id="gBadge">0</span>
+                  </div>
+                  <div class="row g-2 align-items-center">
+                    <div class="col-8">
+                      <input type="range" min="0" max="255" value="0" class="form-range" id="gRange" data-channel="g" />
+                    </div>
+                    <div class="col-4">
+                      <input type="number" min="0" max="255" value="0" class="form-control" id="gNumber" data-channel="g" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Azul -->
+                <div>
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label for="bRange" class="form-label mb-0">Azul (B)</label>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle" id="bBadge">0</span>
+                  </div>
+                  <div class="row g-2 align-items-center">
+                    <div class="col-8">
+                      <input type="range" min="0" max="255" value="0" class="form-range" id="bRange" data-channel="b" />
+                    </div>
+                    <div class="col-4">
+                      <input type="number" min="0" max="255" value="0" class="form-control" id="bNumber" data-channel="b" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                  <button type="button" id="resetBtn" class="btn btn-outline-secondary">Reiniciar</button>
+                </div>
+
+                <hr class="text-body-tertiary" />
+
+                <!-- Lecturas -->
+                <div class="row gy-3">
+                  <div class="col-12 col-md-6">
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="hexValue" readonly value="#000000" />
+                      <label for="hexValue">Hex</label>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                      <button type="button" class="btn btn-outline-primary btn-sm" id="copyHexBtn">
+                        Copiar HEX
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-floating">
+                      <input type="text" class="form-control" id="rgbValue" readonly value="rgb(0, 0, 0)" />
+                      <label for="rgbValue">RGB</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vista previa -->
+        <div class="col-12 col-lg-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-body d-flex flex-column">
+              <div id="colorBox" class="flex-grow-1 rounded-3 border position-relative overflow-hidden">
+                <div class="checkerboard"></div>
+              </div>
+              <small class="text-muted mt-2">Vista previa del color</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenedor para el toast -->
+      <div id="toastContainer" class="position-fixed bottom-0 end-0 m-3"></div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>
